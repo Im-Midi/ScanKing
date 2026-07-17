@@ -1,6 +1,22 @@
 # 扫描王 ScanKing
 
+<p align="center">
+  <img src="docs/hero.svg" alt="扫描王 ScanKing — 免费、无广告、完全离线的文档扫描 App" width="860" />
+</p>
+
 免费、无广告、完全离线的文档扫描 App。Rust 编写，Android / Windows 双端。
+
+<p align="center">
+  <img src="docs/flow.svg" alt="拍摄 → 自动检测边缘 → 透视矫正 → OCR / 导出 PDF" width="860" />
+</p>
+
+<!-- 真机截图：手机截图后放进 docs/ 并取消下面的注释
+<p align="center">
+  <img src="docs/shot-library.png" width="230" />
+  <img src="docs/shot-crop.png" width="230" />
+  <img src="docs/shot-result.png" width="230" />
+</p>
+-->
 
 ## 功能
 

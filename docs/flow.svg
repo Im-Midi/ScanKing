@@ -1,0 +1,89 @@
+<svg viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif">
+  <defs>
+    <filter id="pageShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f8bff"/>
+      <stop offset="1" stop-color="#2f6bff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect x="2" y="2" width="1196" height="426" rx="30" fill="#f3f6fb" stroke="#e5eaf2"/>
+
+  <!-- ① 拍摄：斜放的文档 + 检测框 -->
+  <rect x="60" y="46" width="320" height="290" rx="20" fill="#1a2029"/>
+  <polygon points="146,112 330,98 312,292 122,272" fill="#eceade"/>
+  <g fill="#4b5563">
+    <polygon points="176,146 292,138 291,150 175,158"/>
+    <polygon points="174,172 268,165 267,177 173,184"/>
+    <polygon points="172,198 290,190 289,202 171,210"/>
+    <polygon points="170,224 250,218 249,230 169,236"/>
+    <polygon points="168,250 284,242 283,254 167,262"/>
+  </g>
+  <polygon points="146,112 330,98 312,292 122,272" fill="none" stroke="#4f8bff" stroke-width="3" stroke-dasharray="10 7"/>
+  <g fill="#ffffff" stroke="#2f6bff" stroke-width="3">
+    <circle cx="146" cy="112" r="8"/>
+    <circle cx="330" cy="98" r="8"/>
+    <circle cx="312" cy="292" r="8"/>
+    <circle cx="122" cy="272" r="8"/>
+  </g>
+
+  <!-- 箭头 -->
+  <g stroke="#94a3b8" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M 400 190 H 438 M 424 176 L 440 190 L 424 204"/>
+    <path d="M 800 190 H 838 M 824 176 L 840 190 L 824 204"/>
+  </g>
+
+  <!-- ② 矫正：摆正的干净页面 -->
+  <rect x="460" y="46" width="320" height="290" rx="20" fill="#ffffff" stroke="#e5eaf2"/>
+  <g filter="url(#pageShadow)">
+    <rect x="524" y="76" width="192" height="230" rx="8" fill="#ffffff" stroke="#eef1f6"/>
+  </g>
+  <rect x="544" y="100" width="112" height="13" rx="6" fill="#2f6bff" opacity="0.85"/>
+  <g fill="#cbd5e1">
+    <rect x="544" y="130" width="152" height="9" rx="4.5"/>
+    <rect x="544" y="150" width="140" height="9" rx="4.5"/>
+    <rect x="544" y="170" width="152" height="9" rx="4.5"/>
+    <rect x="544" y="190" width="96" height="9" rx="4.5"/>
+    <rect x="544" y="222" width="152" height="9" rx="4.5"/>
+    <rect x="544" y="242" width="132" height="9" rx="4.5"/>
+    <rect x="544" y="262" width="148" height="9" rx="4.5"/>
+  </g>
+
+  <!-- ③ OCR / PDF -->
+  <rect x="860" y="46" width="320" height="290" rx="20" fill="#ffffff" stroke="#e5eaf2"/>
+  <g filter="url(#pageShadow)">
+    <rect x="892" y="86" width="120" height="150" rx="8" fill="#ffffff" stroke="#eef1f6"/>
+  </g>
+  <rect x="904" y="102" width="66" height="8" rx="4" fill="#94a3b8"/>
+  <g fill="#cbd5e1">
+    <rect x="904" y="122" width="96" height="7" rx="3.5"/>
+    <rect x="904" y="138" width="86" height="7" rx="3.5"/>
+    <rect x="904" y="154" width="96" height="7" rx="3.5"/>
+    <rect x="904" y="170" width="70" height="7" rx="3.5"/>
+    <rect x="904" y="186" width="92" height="7" rx="3.5"/>
+  </g>
+  <!-- OCR 文本气泡 -->
+  <rect x="1032" y="86" width="118" height="112" rx="14" fill="#e7eeff"/>
+  <text x="1048" y="116" font-size="18" font-weight="700" fill="#2f6bff">OCR</text>
+  <g fill="#8fb0ff">
+    <rect x="1048" y="132" width="86" height="7" rx="3.5"/>
+    <rect x="1048" y="148" width="72" height="7" rx="3.5"/>
+    <rect x="1048" y="164" width="86" height="7" rx="3.5"/>
+  </g>
+  <path d="M 1046 198 L 1058 210 L 1082 182" fill="none" stroke="#16a34a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- PDF 徽章 -->
+  <g filter="url(#pageShadow)">
+    <rect x="960" y="246" width="132" height="52" rx="16" fill="url(#blue)"/>
+  </g>
+  <text x="1026" y="280" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">PDF ↓</text>
+
+  <!-- 步骤说明 -->
+  <g font-size="20" font-weight="600" fill="#334155" text-anchor="middle">
+    <text x="220" y="382">① 拍摄 · 自动检测边缘</text>
+    <text x="620" y="382">② 透视矫正 · 智能增强</text>
+    <text x="1020" y="382">③ 离线 OCR · 导出 PDF</text>
+  </g>
+</svg>
