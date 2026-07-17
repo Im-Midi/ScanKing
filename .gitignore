@@ -1,0 +1,18 @@
+/target
+/src-tauri/target
+/src-tauri/gen
+node_modules
+.gradle
+
+# OCR 模型体积大，用 scripts/fetch_models 下载（keys.txt 保留在仓库）
+/ui/models/*.onnx
+
+# 构建产物与日志
+*.apk
+*.log
+
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

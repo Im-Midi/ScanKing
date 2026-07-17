@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>扫描王 ScanKing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ 文档库 ============ -->
+  <div class="view active" id="view-library">
+    <div class="topbar">
+      <h1>扫描王</h1>
+      <button class="icon-btn" id="btn-theme" title="深色模式">
+        <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+    </div>
+    <div class="scroll">
+      <div class="searchbar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search-input" type="search" placeholder="搜索文档名 / 标签 / 识别文字" />
+      </div>
+      <div class="doc-grid" id="doc-grid"></div>
+      <div class="empty-state" id="lib-empty" style="display:none">
+        <svg viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div>还没有扫描件<br/>点右下角 ＋ 开始第一次扫描</div>
+      </div>
+    </div>
+    <button class="fab" id="btn-new-scan" title="新建扫描">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </div>
+
+  <!-- ============ 文档详情 ============ -->
+  <div class="view" id="view-doc">
+    <div class="topbar">
+      <button class="icon-btn" id="btn-doc-back">
+        <svg viewBox="0 0 24 24"><path d="M15 19 8 12l7-7"/></svg>
+      </button>
+      <input class="title-edit" id="doc-title" maxlength="60" />
+      <button class="icon-btn" id="btn-doc-menu">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </div>
+    <div class="scroll" style="padding-bottom:16px">
+      <div class="page-grid" id="page-grid"></div>
+      <div class="empty-state" id="doc-empty" style="display:none">这个文档还没有页面<br/>点下方「添加页」拍摄或导入</div>
+    </div>
+    <div class="bottombar">
+      <button class="btn" id="btn-add-page">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        添加页
+      </button>
+      <button class="btn" id="btn-doc-ocr">
+        <svg viewBox="0 0 24 24"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M8 9h8M8 13h8M8 17h5"/></svg>
+        全文识别
+      </button>
+      <button class="btn primary" id="btn-export">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        导出 PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ 相机 ============ -->
+  <div class="view" id="view-capture">
+    <div class="cam-wrap">
+      <video id="cam-video" autoplay playsinline muted></video>
+      <div class="cam-fallback" id="cam-fallback" style="display:none">
+        <div>相机预览不可用<br/>可以用系统相机拍摄或从相册导入</div>
+        <button class="btn primary" id="btn-native-cam">用系统相机拍摄</button>
+        <button class="btn" id="btn-fallback-gallery">从相册选择</button>
+      </div>
+      <div class="cam-top">
+        <button class="icon-btn" id="btn-cam-close">
+          <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="queue-strip" id="queue-strip"></div>
+    </div>
+    <div class="cam-controls">
+      <div class="cam-side">
+        <button class="icon-btn" id="btn-gallery">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        </button>
+        <span>相册</span>
+      </div>
+      <button class="shutter" id="btn-shutter"></button>
+      <div class="cam-side">
+        <button class="icon-btn" id="btn-cam-done" style="position:relative">
+          <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          <span class="queue-count" id="queue-count" style="display:none">0</span>
+        </button>
+        <span>完成</span>
+      </div>
+    </div>
+    <input type="file" id="file-gallery" accept="image/*" multiple style="display:none" />
+    <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" />
+  </div>
+
+  <!-- ============ 裁剪/滤镜编辑器 ============ -->
+  <div class="view" id="view-editor">
+    <div class="topbar">
+      <button class="icon-btn" id="btn-editor-cancel">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <h1 id="editor-title" style="font-size:17px">调整边框</h1>
+      <button class="icon-btn" id="btn-editor-rotate" title="旋转">
+        <svg viewBox="0 0 24 24"><path d="M21 8a9 9 0 1 0 .5 5"/><path d="M21 3v5h-5"/></svg>
+      </button>
+    </div>
+    <div class="editor-canvas-wrap" id="editor-wrap">
+      <canvas id="editor-canvas"></canvas>
+    </div>
+    <div class="editor-bar" id="crop-bar">
+      <button class="btn" id="btn-auto-detect">自动检测</button>
+      <button class="btn" id="btn-full-page">整页</button>
+      <div style="flex:1"></div>
+      <button class="btn primary" id="btn-crop-next">下一步</button>
+    </div>
+    <div class="editor-bar" id="filter-bar" style="display:none">
+      <button class="filter-chip" data-filter="original">原图</button>
+      <button class="filter-chip active" data-filter="enhance">增强</button>
+      <button class="filter-chip" data-filter="bw">黑白</button>
+      <button class="filter-chip" data-filter="gray">灰度</button>
+      <button class="filter-chip" data-filter="shadow">去阴影</button>
+      <div style="flex:1"></div>
+      <button class="btn primary" id="btn-editor-done">完成</button>
+    </div>
+  </div>
+
+  <!-- ============ 页面查看 ============ -->
+  <div class="view" id="view-page">
+    <div class="topbar">
+      <button class="icon-btn" id="btn-page-back">
+        <svg viewBox="0 0 24 24"><path d="M15 19 8 12l7-7"/></svg>
+      </button>
+      <h1 id="page-title" style="font-size:17px">第 1 页</h1>
+      <button class="icon-btn" id="btn-page-menu">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </div>
+    <div class="page-viewer"><img id="page-img" alt="页面" /></div>
+    <div class="bottombar dark">
+      <button class="btn" id="btn-page-edit">编辑</button>
+      <button class="btn" id="btn-page-ocr">识别文字</button>
+      <button class="btn danger" id="btn-page-delete">删除</button>
+    </div>
+  </div>
+
+  <!-- ============ 弹层 ============ -->
+  <div class="mask" id="mask"><div class="sheet" id="sheet"></div></div>
+  <div id="toast"></div>
+  <div id="loading"><div class="spinner"></div><span id="loading-text">处理中…</span></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = ["core", "src-tauri"]
+
+# No debug symbols in dev builds: keeps the Android .so (and APK) small
+[profile.dev]
+debug = 0
+strip = "symbols"
+
+# Keep image processing fast in debug builds
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.dev.package.scanking-core]
+opt-level = 3
+
+# Almost all tract inference time is spent in tract-linalg SIMD kernels.
+# Building the rest of tract at O0 cuts debug build time a lot with
+# negligible runtime impact.
+[profile.dev.package.tract-core]
+opt-level = 0
+[profile.dev.package.tract-hir]
+opt-level = 0
+[profile.dev.package.tract-onnx]
+opt-level = 0
+[profile.dev.package.tract-nnef]
+opt-level = 0
+[profile.dev.package.tract-data]
+opt-level = 1
+[profile.dev.package.tract-linalg]
+opt-level = 3
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
