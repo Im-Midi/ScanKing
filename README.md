@@ -227,15 +227,6 @@ cargo test -p scanking-core --test ocr_e2e -- --nocapture
 - **数据存哪了**：全部在 App 私有目录（Android：`/data/data/com.ng.scanking/`），
   导出的 PDF 在其中 `library/exports/`，可用"打开 PDF"直接调系统查看器。
 
-## 文档
-
-| 文档 | 内容 |
-|---|---|
-| [开发指南](docs/开发指南.md) | 架构、数据流、命令 API、如何加功能 |
-| [避坑手册](docs/避坑手册.md) | 开发全程踩过的坑：PowerShell / Cargo / tract / Tauri Android JNI 四连坑 |
-| [美术规范](docs/美术规范.md) | Clean UI 设计令牌：色板、圆角、阴影、磨砂玻璃配方、动效 |
-| [项目记忆](docs/项目记忆.md) | 接手必读：决策理由、当前状态、已知限制、路线图 |
-
 ## 致谢
 
 - [Tauri](https://tauri.app) — 跨平台应用框架

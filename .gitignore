@@ -15,6 +15,9 @@ node_modules
 *.keystore
 keystore.properties
 
+# 本地文档（不上传；docs 下的 svg 图仍随仓库发布）
+/docs/*.md
+
 .idea/
 .vscode/
 *.iml
