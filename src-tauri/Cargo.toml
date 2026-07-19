@@ -21,6 +21,10 @@ base64 = "0.22"
 anyhow = "1"
 scanking-core = { path = "../core", default-features = false }
 
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
+ndk-context = "0.1"
+
 [features]
 default = ["ocr"]
 ocr = ["scanking-core/ocr"]

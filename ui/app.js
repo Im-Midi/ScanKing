@@ -270,6 +270,15 @@ $("btn-doc-menu").onclick = () => {
         await call("doc_set_tags", { docId: currentDocId, tags });
         refreshDoc();
       }) },
+    { label: "分享 PDF（微信等）", fn: async () => {
+        if (!currentDoc.pages.length) return toast("文档没有页面");
+        loading(true, "正在准备分享…");
+        try {
+          const path = await call("doc_export_pdf", { docId: currentDocId, mode: "fit", quality: 85 });
+          loading(false);
+          sharePdf(path);
+        } catch { loading(false); }
+      } },
     { label: "证件拼页（选两页合成 A4）", fn: startIdCard },
     { label: "查看全部识别文本", fn: async () => {
         const t = await call("doc_ocr_text", { docId: currentDocId });
@@ -316,6 +325,8 @@ function pageMenu(idx) {
   menuSheet(`第 ${idx + 1} 页`, [
     { label: "编辑（裁剪/滤镜）", fn: () => openEditor(idx) },
     { label: "识别文字", fn: async () => { openPage(idx); runPageOcr(); } },
+    { label: "保存图片到相册", fn: () => savePageToGallery(idx) },
+    { label: "分享图片（微信等）", fn: () => sharePage(idx) },
     ...(idx > 0 ? [{ label: "前移", fn: async () => { [ids[idx - 1], ids[idx]] = [ids[idx], ids[idx - 1]]; await call("pages_reorder", { docId: currentDocId, pageIds: ids }); refreshDoc(); } }] : []),
     ...(idx < ids.length - 1 ? [{ label: "后移", fn: async () => { [ids[idx + 1], ids[idx]] = [ids[idx], ids[idx + 1]]; await call("pages_reorder", { docId: currentDocId, pageIds: ids }); refreshDoc(); } }] : []),
     { label: "删除此页", danger: true, fn: () => confirmSheet("删除此页？", "删除", async () => { await call("page_delete", { docId: currentDocId, pageId: p.meta.id }); refreshDoc(); }) },
@@ -355,11 +366,8 @@ $("btn-export").onclick = () => {
       const path = await call("doc_export_pdf", { docId: currentDocId, mode, quality });
       loading(false);
       menuSheet("导出成功", [
-        { label: "打开 PDF", fn: async () => {
-            if (openerApi && openerApi.openPath) {
-              try { await openerApi.openPath(path); } catch (e) { toast("无法打开：" + e); }
-            } else { toast("文件已保存：" + path, 5000); }
-          } },
+        { label: "打开 PDF", fn: () => openPdf(path) },
+        { label: "分享（微信 / QQ 等）", fn: () => sharePdf(path) },
         { label: "查看保存位置", fn: () => toast(path, 6000) },
       ]);
     } catch {
@@ -455,6 +463,38 @@ function updateQueueCount() {
   el.textContent = importedInSession;
 }
 
+// ---------------- 分享 / 相册 ----------------
+async function savePageToGallery(idx) {
+  const p = currentDoc.pages[idx];
+  loading(true, "正在保存到相册…");
+  try {
+    const where = await call("save_page_gallery", { docId: currentDocId, pageId: p.meta.id });
+    toast("已保存：" + where, 3200);
+  } finally {
+    loading(false);
+  }
+}
+async function sharePage(idx) {
+  const p = currentDoc.pages[idx];
+  try {
+    await call("share_file", { path: p.work });
+  } catch {}
+}
+async function sharePdf(path) {
+  try {
+    await call("share_file", { path });
+  } catch {}
+}
+async function openPdf(path) {
+  if (/android/i.test(navigator.userAgent)) {
+    try { await call("open_file", { path }); } catch {}
+  } else if (openerApi && openerApi.openPath) {
+    try { await openerApi.openPath(path); } catch (e) { toast("无法打开：" + e); }
+  } else {
+    toast("已保存：" + path, 5000);
+  }
+}
+
 // ---------------- 页面查看 ----------------
 function openPage(idx) {
   currentPageIdx = idx;
@@ -465,13 +505,8 @@ function openPage(idx) {
 }
 $("btn-page-back").onclick = () => { refreshDoc(); show("view-doc"); };
 $("btn-page-edit").onclick = () => openEditor(currentPageIdx);
-$("btn-page-delete").onclick = () =>
-  confirmSheet("删除此页？", "删除", async () => {
-    const p = currentDoc.pages[currentPageIdx];
-    await call("page_delete", { docId: currentDocId, pageId: p.meta.id });
-    await refreshDoc();
-    show("view-doc");
-  });
+$("btn-page-save").onclick = () => savePageToGallery(currentPageIdx);
+$("btn-page-share").onclick = () => sharePage(currentPageIdx);
 $("btn-page-menu").onclick = () => {
   menuSheet("页面操作", [
     { label: "快速旋转 90°", fn: async () => {
@@ -490,6 +525,12 @@ $("btn-page-menu").onclick = () => {
         const t = await call("page_ocr", { docId: currentDocId, pageId: p.meta.id });
         textSheet("识别文本", t);
       } },
+    { label: "删除此页", danger: true, fn: () => confirmSheet("删除此页？", "删除", async () => {
+        const p = currentDoc.pages[currentPageIdx];
+        await call("page_delete", { docId: currentDocId, pageId: p.meta.id });
+        await refreshDoc();
+        show("view-doc");
+      }) },
   ]);
 };
 

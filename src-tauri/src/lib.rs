@@ -1,5 +1,8 @@
 //! Tauri 命令层：薄封装，所有重逻辑都在 scanking-core
 
+#[cfg(target_os = "android")]
+mod android;
+
 use base64::Engine;
 use scanking_core::store::{DocMeta, DocSummary, PageInfo, Store};
 use serde::Serialize;
@@ -181,6 +184,118 @@ async fn doc_export_pdf(
     .map_err(err_str)?
 }
 
+// ---------------- 分享 / 相册 / 打开 ----------------
+
+/// 校验路径必须在应用数据目录内，防止任意文件读取
+fn ensure_in_store(state: &AppState, path: &str) -> Result<std::path::PathBuf, String> {
+    let root = state.store.root().canonicalize().map_err(err_str)?;
+    let p = std::path::Path::new(path).canonicalize().map_err(err_str)?;
+    if !p.starts_with(&root) {
+        return Err("路径不允许".into());
+    }
+    Ok(p)
+}
+
+fn mime_of(p: &std::path::Path) -> &'static str {
+    if p.extension().map(|e| e == "pdf").unwrap_or(false) {
+        "application/pdf"
+    } else {
+        "image/jpeg"
+    }
+}
+
+/// 在阻塞线程池执行原生调用，并把 panic 转成可见错误（避免前端永远等不到回应）
+#[cfg(target_os = "android")]
+async fn run_native<T: Send + 'static>(
+    f: impl FnOnce() -> Result<T, String> + Send + 'static,
+) -> Result<T, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        match std::panic::catch_unwind(std::panic::AssertUnwindSafe(f)) {
+            Ok(r) => r,
+            Err(p) => {
+                let msg = p
+                    .downcast_ref::<&str>()
+                    .map(|s| s.to_string())
+                    .or_else(|| p.downcast_ref::<String>().cloned())
+                    .unwrap_or_else(|| "未知原生崩溃".into());
+                Err(format!("原生调用异常: {}", msg))
+            }
+        }
+    })
+    .await
+    .map_err(err_str)?
+}
+
+/// 调起系统分享面板（微信/QQ 等自动出现）。支持 PDF 与页面图片。
+#[tauri::command]
+async fn share_file(state: tauri::State<'_, AppState>, path: String) -> CmdResult<()> {
+    let p = ensure_in_store(&state, &path)?;
+    #[cfg(target_os = "android")]
+    {
+        let mime = mime_of(&p);
+        let ps = p.to_string_lossy().to_string();
+        return run_native(move || android::share_file(&ps, mime, "分享到")).await;
+    }
+    #[allow(unreachable_code)]
+    {
+        let _ = p;
+        Err("分享功能在手机端可用；桌面端请用「打开」按钮".into())
+    }
+}
+
+/// 用系统默认应用打开文件（安卓原生实现，不依赖 opener 插件）
+#[tauri::command]
+async fn open_file(state: tauri::State<'_, AppState>, path: String) -> CmdResult<()> {
+    let p = ensure_in_store(&state, &path)?;
+    #[cfg(target_os = "android")]
+    {
+        let mime = mime_of(&p);
+        let ps = p.to_string_lossy().to_string();
+        return run_native(move || android::open_file(&ps, mime)).await;
+    }
+    #[allow(unreachable_code)]
+    {
+        let _ = p;
+        Err("桌面端请通过前端 opener 打开".into())
+    }
+}
+
+/// 保存页面图片：安卓存入系统相册（Pictures/ScanKing），Windows 存入图片文件夹
+#[tauri::command]
+async fn save_page_gallery(
+    state: tauri::State<'_, AppState>,
+    doc_id: String,
+    page_id: String,
+) -> CmdResult<String> {
+    let src = state.store.work_image_path(&doc_id, &page_id);
+    let name = format!(
+        "ScanKing_{}_{}.jpg",
+        &doc_id[..6.min(doc_id.len())],
+        &page_id[..6.min(page_id.len())]
+    );
+    #[cfg(target_os = "android")]
+    {
+        let bytes = std::fs::read(&src).map_err(err_str)?;
+        let n = name.clone();
+        run_native(move || android::save_image_to_gallery(&bytes, &n)).await?;
+        return Ok("相册 · Pictures/ScanKing".into());
+    }
+    #[cfg(all(not(target_os = "android"), target_os = "windows"))]
+    {
+        let home = std::env::var("USERPROFILE").map_err(err_str)?;
+        let dir = std::path::PathBuf::from(home).join("Pictures").join("ScanKing");
+        std::fs::create_dir_all(&dir).map_err(err_str)?;
+        let dest = dir.join(&name);
+        std::fs::copy(&src, &dest).map_err(err_str)?;
+        return Ok(dest.to_string_lossy().to_string());
+    }
+    #[allow(unreachable_code)]
+    {
+        let _ = src;
+        Err("此平台暂不支持".into())
+    }
+}
+
 // ---------------- OCR ----------------
 
 #[tauri::command]
@@ -324,6 +439,9 @@ pub fn run() {
             pages_reorder,
             idcard_compose,
             doc_export_pdf,
+            share_file,
+            open_file,
+            save_page_gallery,
             ocr_ready,
             install_model,
             page_ocr,

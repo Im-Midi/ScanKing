@@ -1,0 +1,163 @@
+<svg viewBox="0 0 1240 730" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif">
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f8bff"/>
+      <stop offset="1" stop-color="#2f6bff"/>
+    </linearGradient>
+    <filter id="ps" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.22"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- ============ 手机 1：文档库（浅色） ============ -->
+  <g filter="url(#ps)">
+    <rect x="70" y="40" width="300" height="620" rx="38" fill="#0d1117"/>
+  </g>
+  <rect x="80" y="50" width="280" height="600" rx="28" fill="#eef1f6"/>
+  <!-- 顶栏 -->
+  <path d="M 80 78 h 280 v 36 h -280 z" fill="#f8fafd" opacity="0.9"/>
+  <rect x="80" y="113" width="280" height="1" fill="#e5eaf2"/>
+  <text x="100" y="102" font-size="17" font-weight="700" fill="#0f172a">扫描王</text>
+  <path d="M 341 88 a 8 8 0 1 0 0 12 a 6.5 6.5 0 0 1 0 -12" fill="#64748b"/>
+  <!-- 搜索框 -->
+  <rect x="96" y="128" width="248" height="38" rx="13" fill="#ffffff" stroke="#e5eaf2" filter="url(#soft)"/>
+  <circle cx="116" cy="147" r="6" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="121" y1="152" x2="126" y2="157" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+  <text x="136" y="152" font-size="12" fill="#94a3b8">搜索文档名 / 识别文字</text>
+  <!-- 文档卡片 2x2 -->
+  <g>
+    <rect x="96" y="184" width="118" height="176" rx="14" fill="#ffffff" stroke="#e5eaf2" filter="url(#soft)"/>
+    <path d="M 96 198 a 14 14 0 0 1 14 -14 h 90 a 14 14 0 0 1 14 14 v 96 h -118 z" fill="#d9e3f2"/>
+    <rect x="116" y="204" width="78" height="6" rx="3" fill="#94a3b8"/>
+    <rect x="116" y="218" width="64" height="6" rx="3" fill="#aab6c8"/>
+    <rect x="116" y="232" width="78" height="6" rx="3" fill="#aab6c8"/>
+    <rect x="116" y="246" width="50" height="6" rx="3" fill="#aab6c8"/>
+    <text x="107" y="317" font-size="11" font-weight="650" fill="#0f172a">房屋合同</text>
+    <text x="107" y="333" font-size="9" fill="#7c8698">6 页 · 07-19</text>
+    <rect x="107" y="340" width="34" height="14" rx="7" fill="#e7eeff"/>
+    <text x="124" y="350" font-size="8.5" fill="#2f6bff" text-anchor="middle">重要</text>
+  </g>
+  <g>
+    <rect x="226" y="184" width="118" height="176" rx="14" fill="#ffffff" stroke="#e5eaf2" filter="url(#soft)"/>
+    <path d="M 226 198 a 14 14 0 0 1 14 -14 h 90 a 14 14 0 0 1 14 14 v 96 h -118 z" fill="#e3ddcf"/>
+    <rect x="246" y="206" width="78" height="8" rx="4" fill="#8a8577"/>
+    <rect x="246" y="224" width="60" height="6" rx="3" fill="#a39d8d"/>
+    <rect x="246" y="238" width="78" height="6" rx="3" fill="#a39d8d"/>
+    <text x="237" y="317" font-size="11" font-weight="650" fill="#0f172a">发票 7 月</text>
+    <text x="237" y="333" font-size="9" fill="#7c8698">3 页 · 07-18</text>
+    <rect x="237" y="340" width="34" height="14" rx="7" fill="#e7eeff"/>
+    <text x="254" y="350" font-size="8.5" fill="#2f6bff" text-anchor="middle">报销</text>
+  </g>
+  <g>
+    <rect x="96" y="374" width="118" height="176" rx="14" fill="#ffffff" stroke="#e5eaf2" filter="url(#soft)"/>
+    <path d="M 96 388 a 14 14 0 0 1 14 -14 h 90 a 14 14 0 0 1 14 14 v 96 h -118 z" fill="#cfd8e8"/>
+    <rect x="112" y="396" width="86" height="56" rx="4" fill="#eef2f8"/>
+    <rect x="120" y="408" width="52" height="5" rx="2.5" fill="#8fa0b8"/>
+    <rect x="120" y="420" width="66" height="5" rx="2.5" fill="#aab6c8"/>
+    <rect x="120" y="432" width="44" height="5" rx="2.5" fill="#aab6c8"/>
+    <text x="107" y="507" font-size="11" font-weight="650" fill="#0f172a">身份证</text>
+    <text x="107" y="523" font-size="9" fill="#7c8698">2 页 · 07-17</text>
+  </g>
+  <g>
+    <rect x="226" y="374" width="118" height="176" rx="14" fill="#ffffff" stroke="#e5eaf2" filter="url(#soft)"/>
+    <path d="M 226 388 a 14 14 0 0 1 14 -14 h 90 a 14 14 0 0 1 14 14 v 96 h -118 z" fill="#dde6d8"/>
+    <rect x="246" y="398" width="78" height="6" rx="3" fill="#93a08c"/>
+    <rect x="246" y="412" width="66" height="6" rx="3" fill="#a8b3a1"/>
+    <rect x="246" y="426" width="78" height="6" rx="3" fill="#a8b3a1"/>
+    <rect x="246" y="440" width="40" height="6" rx="3" fill="#a8b3a1"/>
+    <text x="237" y="507" font-size="11" font-weight="650" fill="#0f172a">会议纪要</text>
+    <text x="237" y="523" font-size="9" fill="#7c8698">1 页 · 07-16</text>
+  </g>
+  <!-- FAB -->
+  <circle cx="322" cy="606" r="26" fill="url(#blue)" filter="url(#soft)"/>
+  <path d="M 322 594 v 24 M 310 606 h 24" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- ============ 手机 2：智能裁剪（深色） ============ -->
+  <g filter="url(#ps)">
+    <rect x="470" y="40" width="300" height="620" rx="38" fill="#0d1117"/>
+  </g>
+  <rect x="480" y="50" width="280" height="600" rx="28" fill="#101318"/>
+  <path d="M 480 78 h 280 v 36 h -280 z" fill="#161b23" opacity="0.9"/>
+  <text x="620" y="102" font-size="14" font-weight="650" fill="#edf1f7" text-anchor="middle">调整边框</text>
+  <!-- 斜放文档 + 检测框 -->
+  <polygon points="530,190 706,168 692,436 516,412" fill="#eceade"/>
+  <g fill="#565d52">
+    <polygon points="556,224 668,210 667,222 555,236"/>
+    <polygon points="554,252 640,242 639,254 553,264"/>
+    <polygon points="552,280 666,266 665,278 551,292"/>
+    <polygon points="550,308 620,300 619,312 549,320"/>
+    <polygon points="548,336 662,322 661,334 547,348"/>
+    <polygon points="546,364 606,358 605,370 545,376"/>
+  </g>
+  <polygon points="530,190 706,168 692,436 516,412" fill="none" stroke="#4f8bff" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <g fill="#ffffff" stroke="#2f6bff" stroke-width="2.5">
+    <circle cx="530" cy="190" r="7"/>
+    <circle cx="706" cy="168" r="7"/>
+    <circle cx="692" cy="436" r="7"/>
+    <circle cx="516" cy="412" r="7"/>
+  </g>
+  <!-- 放大镜 -->
+  <circle cx="712" cy="230" r="30" fill="#000000" stroke="#4f8bff" stroke-width="2"/>
+  <polygon points="694,242 730,234 730,258 694,262" fill="#eceade"/>
+  <path d="M 704 230 h 16 M 712 222 v 16" stroke="#4f8bff" stroke-width="1.6"/>
+  <!-- 底部工具条 -->
+  <path d="M 480 560 h 280 v 62 h -280 z" fill="#161b23" opacity="0.95"/>
+  <rect x="496" y="576" width="54" height="30" rx="15" fill="#20252d" stroke="#2a313c"/>
+  <text x="523" y="596" font-size="11" fill="#c3ccd9" text-anchor="middle">自动</text>
+  <rect x="558" y="576" width="54" height="30" rx="15" fill="#20252d" stroke="#2a313c"/>
+  <text x="585" y="596" font-size="11" fill="#c3ccd9" text-anchor="middle">整页</text>
+  <rect x="662" y="576" width="82" height="30" rx="15" fill="url(#blue)"/>
+  <text x="703" y="596" font-size="11" font-weight="650" fill="#ffffff" text-anchor="middle">下一步</text>
+
+  <!-- ============ 手机 3：页面操作（深色） ============ -->
+  <g filter="url(#ps)">
+    <rect x="870" y="40" width="300" height="620" rx="38" fill="#0d1117"/>
+  </g>
+  <rect x="880" y="50" width="280" height="600" rx="28" fill="#101318"/>
+  <path d="M 880 78 h 280 v 36 h -280 z" fill="#161b23" opacity="0.9"/>
+  <text x="1020" y="102" font-size="14" font-weight="650" fill="#edf1f7" text-anchor="middle">第 1 页</text>
+  <!-- 矫正后的页面 -->
+  <g filter="url(#ps)">
+    <rect x="928" y="140" width="184" height="326" rx="6" fill="#ffffff"/>
+  </g>
+  <rect x="946" y="164" width="104" height="11" rx="5.5" fill="#2f6bff" opacity="0.85"/>
+  <g fill="#cbd5e1">
+    <rect x="946" y="192" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="208" width="136" height="7" rx="3.5"/>
+    <rect x="946" y="224" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="240" width="92" height="7" rx="3.5"/>
+    <rect x="946" y="268" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="284" width="128" height="7" rx="3.5"/>
+    <rect x="946" y="300" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="316" width="106" height="7" rx="3.5"/>
+    <rect x="946" y="344" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="360" width="140" height="7" rx="3.5"/>
+    <rect x="946" y="376" width="88" height="7" rx="3.5"/>
+    <rect x="946" y="404" width="148" height="7" rx="3.5"/>
+    <rect x="946" y="420" width="120" height="7" rx="3.5"/>
+  </g>
+  <rect x="1054" y="150" width="48" height="17" rx="8.5" fill="#2f6bff"/>
+  <text x="1078" y="162" font-size="9.5" font-weight="600" fill="#ffffff" text-anchor="middle">已识别</text>
+  <!-- 底部操作栏 -->
+  <path d="M 880 566 h 280 v 56 h -280 z" fill="#10131a" opacity="0.88"/>
+  <g font-size="11" fill="#dde4ee" text-anchor="middle" font-weight="600">
+    <rect x="892" y="578" width="58" height="32" rx="12" fill="#ffffff" opacity="0.08"/>
+    <text x="921" y="598">编辑</text>
+    <rect x="958" y="578" width="58" height="32" rx="12" fill="#ffffff" opacity="0.08"/>
+    <text x="987" y="598">识别</text>
+    <rect x="1024" y="578" width="58" height="32" rx="12" fill="#ffffff" opacity="0.08"/>
+    <text x="1053" y="598">存图</text>
+    <rect x="1090" y="578" width="58" height="32" rx="12" fill="url(#blue)"/>
+    <text x="1119" y="598" fill="#ffffff">分享</text>
+  </g>
+
+  <!-- 底部说明 -->
+  <g font-size="16" font-weight="600" fill="#334155" text-anchor="middle">
+    <text x="220" y="706">文档库 · 全文搜索</text>
+    <text x="620" y="706">自动裁边 · 手动微调</text>
+    <text x="1020" y="706">一键存图 · 分享微信</text>
+  </g>
+</svg>

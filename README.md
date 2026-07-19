@@ -1,16 +1,27 @@
-# 扫描王 ScanKing
+<div align="center">
 
-<p align="center">
-  <img src="docs/hero.svg" alt="扫描王 ScanKing — 免费、无广告、完全离线的文档扫描 App" width="860" />
+<img src="docs/hero.svg" alt="扫描王 ScanKing — 免费、无广告、完全离线的文档扫描 App" width="860" />
+
+<p>
+  <img src="https://img.shields.io/badge/License-MIT-2f6bff" alt="MIT" />
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20Windows-2f6bff" alt="Platform" />
+  <img src="https://img.shields.io/badge/Rust-2021-orange" alt="Rust" />
+  <img src="https://img.shields.io/badge/Tauri-2-24C8DB" alt="Tauri 2" />
+  <img src="https://img.shields.io/badge/OCR-%E7%A6%BB%E7%BA%BF%E4%B8%AD%E8%8B%B1%E6%96%87-16a34a" alt="Offline OCR" />
 </p>
 
-免费、无广告、完全离线的文档扫描 App。Rust 编写，Android / Windows 双端。
+**被扫描 App 的收费和广告气到，于是用 Rust 写了一个自己的。**
+数据永远只在你的设备上 —— 无广告、无会员、无网络请求。
+
+</div>
+
+## 界面预览
 
 <p align="center">
-  <img src="docs/flow.svg" alt="拍摄 → 自动检测边缘 → 透视矫正 → OCR / 导出 PDF" width="860" />
+  <img src="docs/screens.svg" alt="文档库 / 智能裁剪 / 页面操作" width="920" />
 </p>
 
-<!-- 真机截图：手机截图后放进 docs/ 并取消下面的注释
+<!-- 真机截图：手机截图后放进 docs/ 并取消下面的注释（矢量图可同时保留或删除）
 <p align="center">
   <img src="docs/shot-library.png" width="230" />
   <img src="docs/shot-crop.png" width="230" />
@@ -26,10 +37,20 @@
 - 多页文档：批量拍摄、排序、删除
 - 导出 PDF（自适应页面或 A4 居中），可调图像质量
 - 离线 OCR 中英文识别（PaddleOCR v4 模型 + 纯 Rust 推理，不联网）
+- 一键分享到微信 / QQ 等（系统分享面板），图片和 PDF 均可
+- 页面图片保存到系统相册（Pictures/ScanKing）
 - 全文搜索：按文档名、标签、识别文字搜索
 - 证件拼页：正反面合成一张 A4
-- 文档库管理：重命名、标签、深色模式
+- 文档库管理：重命名、标签、深色模式，磨砂质感 Clean UI
 - 无广告、无会员、无网络请求，所有数据只存在你手机里
+
+## 工作原理
+
+<p align="center">
+  <img src="docs/flow.svg" alt="拍摄 → 自动检测边缘 → 透视矫正 → OCR / 导出 PDF" width="860" />
+</p>
+
+拍摄后自动完成：缩放灰度 → 自适应 Canny 边缘 → 轮廓四边形拟合 → 单应矩阵透视矫正（Catmull-Rom 双三次采样）→ 滤镜增强。OCR 由纯 Rust 推理引擎 tract 运行 PaddleOCR v4 模型，全程离线。
 
 ## 架构
 
@@ -205,6 +226,15 @@ cargo test -p scanking-core --test ocr_e2e -- --nocapture
 - **OCR 速度**：纯 CPU 推理，整页识别在中端手机上约 3～10 秒；桌面上 1～2 秒。
 - **数据存哪了**：全部在 App 私有目录（Android：`/data/data/com.ng.scanking/`），
   导出的 PDF 在其中 `library/exports/`，可用"打开 PDF"直接调系统查看器。
+
+## 文档
+
+| 文档 | 内容 |
+|---|---|
+| [开发指南](docs/开发指南.md) | 架构、数据流、命令 API、如何加功能 |
+| [避坑手册](docs/避坑手册.md) | 开发全程踩过的坑：PowerShell / Cargo / tract / Tauri Android JNI 四连坑 |
+| [美术规范](docs/美术规范.md) | Clean UI 设计令牌：色板、圆角、阴影、磨砂玻璃配方、动效 |
+| [项目记忆](docs/项目记忆.md) | 接手必读：决策理由、当前状态、已知限制、路线图 |
 
 ## 致谢
 

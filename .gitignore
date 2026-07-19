@@ -11,6 +11,10 @@ node_modules
 *.apk
 *.log
 
+# 签名密钥（绝不能入库）
+*.keystore
+keystore.properties
+
 .idea/
 .vscode/
 *.iml

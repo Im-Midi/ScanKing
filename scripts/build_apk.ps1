@@ -224,6 +224,26 @@ if ($mtxt -notmatch "android.permission.CAMERA") {
     Add-Content $Log "camera permission added"
 } else { Add-Content $Log "camera permission already present" }
 
+Step "patch FileProvider paths (share to WeChat etc.)"
+# 复用 Tauri 自带的 FileProvider：只需给它的 file_paths.xml 加 root-path。
+# （注意不能再注册第二个同类名 provider——运行时只有一个实例响应，另一个的配置会失效）
+$fp = Join-Path $gen "app\src\main\res\xml\file_paths.xml"
+if (Test-Path $fp) {
+    $fpx = Get-Content $fp -Raw -Encoding utf8
+    if ($fpx -notmatch "root-path") {
+        $fpx = $fpx -replace "</paths>", "  <root-path name=`"skroot`" path=`".`" />`r`n</paths>"
+        Set-Content -Path $fp -Value $fpx -Encoding utf8
+        Add-Content $Log "root-path added to file_paths.xml"
+    } else { Add-Content $Log "root-path already present" }
+} else { Add-Content $Log "WARN: file_paths.xml not found" }
+# 清理旧版本残留的重复 provider 声明
+$mtxt = Get-Content $manifest -Raw -Encoding utf8
+if ($mtxt -match "skshare") {
+    $mtxt = $mtxt -replace "(?s)\s*<provider[^>]*?skshare.*?</provider>", ""
+    Set-Content -Path $manifest -Value $mtxt -Encoding utf8
+    Add-Content $Log "removed legacy skshare provider"
+}
+
 Step "patch MainActivity (runtime camera permission)"
 $mainDir = Join-Path $gen "app\src\main\java\com\ng\scanking"
 $main = Join-Path $mainDir "MainActivity.kt"
@@ -232,14 +252,27 @@ $kt = @"
 package com.ng.scanking
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : TauriActivity() {
+  companion object {
+    @JvmStatic
+    private external fun nativeInit(context: Context)
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    // 把 Application Context 交给 Rust（分享/相册/打开文件需要）
+    try {
+      nativeInit(applicationContext)
+    } catch (e: Throwable) {
+      Log.e("ScanKing", "nativeInit failed", e)
+    }
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1001)
@@ -262,6 +295,51 @@ if ($appGradle) {
         Add-Content $Log "core-ktx added to $appGradle"
     } else { Add-Content $Log "core-ktx already present" }
 } else { Add-Content $Log "WARN: app gradle file not found" }
+
+if ($Release) {
+    Step "configure release signing"
+    $ks = Join-Path $Root "scanking.keystore"
+    $ksProps = Join-Path $gen "keystore.properties"
+    if (-not (Test-Path $ks)) {
+        $pw = -join ((48..57) + (65..90) + (97..122) | Get-Random -Count 20 | ForEach-Object { [char]$_ })
+        $keytool = Join-Path $env:JAVA_HOME "bin\keytool.exe"
+        $rc = Run $keytool @("-genkeypair", "-v", "-keystore", "`"$ks`"", "-alias", "scanking",
+            "-keyalg", "RSA", "-keysize", "2048", "-validity", "10000",
+            "-storepass", $pw, "-keypass", $pw,
+            "-dname", "`"CN=ScanKing,OU=Dev,O=ScanKing,C=CN`"")
+        if ($rc -ne 0) { Fail "keytool keystore generation failed" }
+        $ksFwd = $ks -replace "\\", "/"
+        Set-Content -Path $ksProps -Value "storeFile=$ksFwd`nstorePassword=$pw`nkeyAlias=scanking`nkeyPassword=$pw" -Encoding ascii
+        Add-Content $Log "keystore + keystore.properties generated (KEEP THEM SAFE, both are gitignored)"
+    } elseif (-not (Test-Path $ksProps)) {
+        Fail "scanking.keystore exists but gen\android\keystore.properties is missing - create it manually (storeFile/storePassword/keyAlias/keyPassword)"
+    }
+
+    # wire signing into app/build.gradle.kts (idempotent)
+    $bg = Join-Path $gen "app\build.gradle.kts"
+    if (Test-Path $bg) {
+        $g = Get-Content $bg -Raw -Encoding utf8
+        if ($g -notmatch "keystore\.properties") {
+            # 逐条查重：Tauri 模板可能已自带部分 import
+            if ($g -notmatch "import java\.io\.FileInputStream") { $g = "import java.io.FileInputStream`r`n" + $g }
+            if ($g -notmatch "import java\.util\.Properties") { $g = "import java.util.Properties`r`n" + $g }
+            $loader = "val keystorePropertiesFile = rootProject.file(`"keystore.properties`")`r`nval keystoreProperties = Properties()`r`nif (keystorePropertiesFile.exists()) { keystoreProperties.load(FileInputStream(keystorePropertiesFile)) }`r`n"
+            $g = $g -replace "(?m)^android \{", "$loader`r`nandroid {"
+            $sign = "    signingConfigs {`r`n        create(`"release`") {`r`n            if (keystorePropertiesFile.exists()) {`r`n                keyAlias = keystoreProperties[`"keyAlias`"] as String`r`n                keyPassword = keystoreProperties[`"keyPassword`"] as String`r`n                storeFile = file(keystoreProperties[`"storeFile`"] as String)`r`n                storePassword = keystoreProperties[`"storePassword`"] as String`r`n            }`r`n        }`r`n    }"
+            $g = $g -replace "(?m)^android \{", "android {`r`n$sign"
+            $g = $g -replace "(getByName\(`"release`"\)\s*\{)", "`$1`r`n            signingConfig = signingConfigs.getByName(`"release`")"
+            Set-Content -Path $bg -Value $g -Encoding utf8
+            Add-Content $Log "signing wired into build.gradle.kts"
+        } else { Add-Content $Log "signing already wired" }
+    }
+
+    # keep FileProvider API from being stripped by R8 (called via JNI only)
+    $pg = Join-Path $gen "app\proguard-rules.pro"
+    if ((Test-Path $pg) -and ((Get-Content $pg -Raw) -notmatch "FileProvider")) {
+        Add-Content $pg "`n-keep class androidx.core.content.FileProvider { *; }"
+        Add-Content $Log "proguard keep rule added"
+    }
+}
 
 if ($UseMirror) {
     Step "apply China mirrors (gradle + maven)"
